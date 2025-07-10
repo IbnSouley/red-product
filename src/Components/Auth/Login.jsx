@@ -133,21 +133,41 @@ function AdminLoginForm() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simuler une authentification
-    if (form.email === "admin@example.com" && form.password === "admin") {
-      navigate("/dashboard");
-    } else {
-      alert("Identifiants invalides");
+    try {
+      const response = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Stocker un token ici si le backend le fournit (optionnel)
+        // localStorage.setItem("token", data.token);
+
+        navigate("/dashboard");
+      } else {
+        alert(data.message || "Identifiants invalides");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la connexion :", error);
+      alert("Erreur réseau ou serveur.");
     }
   };
 

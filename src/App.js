@@ -27,23 +27,3 @@ function App() {
 export default App;
 
 
-
-
-
-
-
-// import { useState } from 'react';
-// import './App.css';
-// import Register from './Components/Auth/Register'
-// import Login from './Components/Auth/Login'
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// function App() {
-//   const [count, setCount] = useState(0)
-//   return (
-//    <Register/>,
-//    <Login/>
-//   );
-// }
-
-// export default App;

@@ -1,5 +1,5 @@
-// AdminRegisterForm.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 // 🌆 Background global
@@ -40,7 +40,6 @@ const Form = styled.form`
   gap: 1rem;
 `;
 
-// ✏️ Champs de texte
 const Input = styled.input`
   padding: 35px;
   border: none;
@@ -50,7 +49,6 @@ const Input = styled.input`
   font-size: 1rem;
   outline: none;
   margin-bottom: 0.2rem;
-
   &::placeholder {
     color: #bcbcbc;
     font-size: 1rem;
@@ -58,7 +56,6 @@ const Input = styled.input`
   }
 `;
 
-// ✅ Checkbox + label
 const CheckboxContainer = styled.label`
   display: flex;
   align-items: center;
@@ -75,7 +72,6 @@ const Checkbox = styled.input.attrs({ type: "checkbox" })`
   cursor: pointer;
 `;
 
-// 🔘 Bouton
 const Button = styled.button`
   margin-top: 0.7rem;
   padding: 0.9rem;
@@ -93,24 +89,12 @@ const Button = styled.button`
   }
 `;
 
-// 🔗 Liens et bas de page
 const LinkContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 1.8rem;
   gap: 0.5rem;
-`;
-
-const LinkYellow = styled.a`
-  color: #ffd600;
-  font-weight: 500;
-  font-size: 1.01rem;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 const LinkText = styled.span`
@@ -123,20 +107,21 @@ const LinkSignUp = styled.a`
   font-weight: 500;
   text-decoration: none;
   margin-left: 0.2rem;
-
   &:hover {
     text-decoration: underline;
   }
 `;
 
 // 🧠 Composant principal
- function AdminRegisterForm() {
+function AdminRegisterForm() {
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     accept: false,
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -146,7 +131,7 @@ const LinkSignUp = styled.a`
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.accept) {
@@ -154,14 +139,36 @@ const LinkSignUp = styled.a`
       return;
     }
 
-    // 🔁 Remplacer par une vraie API
-    console.log("Formulaire soumis :", form);
-    alert("Inscription envoyée !");
+    try {
+      const response = await fetch("http://localhost:3000/api/signUp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Inscription réussie !");
+        navigate("/"); // ou vers la page de connexion si tu préfères
+      } else {
+        alert(data.message || "Erreur d'inscription.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'inscription :", error);
+      alert("Erreur réseau ou serveur.");
+    }
   };
 
   return (
     <Background>
-         <h1>RED PRODUCT</h1>
+      <h1 style={{ color: "#fff", marginBottom: "20px" }}>RED PRODUCT</h1>
       <Container>
         <Title>Inscrivez-vous en tant qu'admin</Title>
         <Form onSubmit={handleSubmit}>
@@ -215,5 +222,4 @@ const LinkSignUp = styled.a`
   );
 }
 
-
-export default  AdminRegisterForm;
+export default AdminRegisterForm;

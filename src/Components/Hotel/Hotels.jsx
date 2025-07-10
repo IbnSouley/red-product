@@ -1,12 +1,14 @@
 // HotelListDashboard.jsx
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FaHotel, FaUserCircle } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { BsListUl } from "react-icons/bs";
-import { NavLink, useNavigate } from "react-router-dom";
+import { FiBell } from "react-icons/fi";
+import { NavLink } from "react-router-dom";
+import CreateHotel from "../Hotel/CreateHotel"; // 👈 Assure-toi que le chemin est correct
 
-// Liste d'hôtels
+// Données hôtels
 const hotels = [
   {
     name: "Hôtel Terrou-Bi",
@@ -14,54 +16,35 @@ const hotels = [
     price: "25 000 XOF par nuit",
     image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
   },
-  {
+    {
     name: "King Fahd Palace",
-    address: "Rte des Almadies, Dakar",
+    address: "Rue des almadies, Dakar",
     price: "20 000 XOF par nuit",
-    image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgK54LuZ8g5gQ50ZJr10_LKqM6Txgz37Wp6Q&s",
   },
-  {
-    name: "Radisson Blu Hotel",
-    address: "Rte de la Corniche O, Dakar 16868",
+    {
+    name: "Radisson Blue",
+    address: "Rue de Corniche O, 16868",
     price: "22 000 XOF par nuit",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+    image: "https://www.myboutiquehotel.com/photos/57961/radisson-blu-dakar-dakar-001-20671-900x570.jpg",
   },
-  {
+    {
     name: "Pullman Dakar Teranga",
-    address: "Place de l’Indépendance, 10 Rue PL 29, Dakar",
+    address: "Place de l'Independance, 10 Rue PL 29, Dakar",
     price: "30 000 XOF par nuit",
-    image: "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=400&q=80",
+    image: "https://www.seneguide.com/images/cache/schema_1x1/images/address/213/312917636-511850007469493-2822919377169805455-n.jpeg",
   },
-  {
-    name: "Hôtel Lac Rose",
-    address: "Lac Rose, Dakar",
-    price: "25 000 XOF par nuit",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    name: "Hôtel Saly",
-    address: "Mbour, Sénégal",
-    price: "20 000 XOF par nuit",
-    image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    name: "Palm Beach Resort & Spa",
-    address: "BP64 Saly 23003",
-    price: "20 000 XOF par nuit",
-    image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    name: "Pullman Dakar Teranga",
-    address: "Place de l’Indépendance, 10 Rue PL 29, Dakar",
-    price: "30 000 XOF par nuit",
-    image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
-  },
+  // ... (les autres hôtels ici)
 ];
 
 const Layout = styled.div`
   display: flex;
   min-height: 100vh;
   background: #f7f7f7;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const Sidebar = styled.aside`
@@ -71,49 +54,79 @@ const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
   padding-top: 1.5rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-direction: row;
+    padding: 0.5rem;
+    overflow-x: auto;
+  }
 `;
 
 const SidebarHeader = styled.div`
   font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: 1px;
   margin-bottom: 2.5rem;
   padding-left: 2rem;
+
+  @media (max-width: 768px) {
+    padding-left: 1rem;
+    margin-bottom: 0;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+  }
 `;
 
 const SidebarMenu = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+  }
 `;
 
 const SidebarMenuItem = styled(NavLink)`
   padding: 0.9rem 2rem;
-  background: transparent;
   color: #bdbdbd;
-  border-left: 4px solid transparent;
-  font-weight: 400;
+  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  text-decoration: none;
 
   &.active {
     background: #36393d;
     color: #fff;
     border-left: 4px solid #ffd600;
-    font-weight: 600;
+
+    @media (max-width: 768px) {
+      border-left: none;
+      border-bottom: 2px solid #ffd600;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
   }
 `;
 
 const SidebarFooter = styled.div`
   margin-top: auto;
-  padding: 2rem 2rem 1.3rem 2rem;
+  padding: 2rem;
   display: flex;
   align-items: center;
   gap: 0.9rem;
   background: #2d2f34;
   border-radius: 0 0 8px 8px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const Avatar = styled.div`
@@ -126,7 +139,6 @@ const Avatar = styled.div`
   justify-content: center;
   color: #a084e8;
   font-size: 1.4rem;
-  font-weight: bold;
 `;
 
 const UserInfo = styled.div`
@@ -148,17 +160,21 @@ const Main = styled.main`
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #f7f7f7;
 `;
 
 const Header = styled.header`
   background: #fff;
-  height: 60px;
+  padding: 1rem 2rem;
   display: flex;
-  align-items: center;
-  padding: 0 2rem;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
   border-bottom: 1px solid #ececec;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 `;
 
 const Title = styled.h2`
@@ -167,14 +183,23 @@ const Title = styled.h2`
   color: #232323;
 `;
 
+const HeaderSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+`;
+
 const SearchBar = styled.input`
-  background: #f2f2f2;
-  border: none;
+  background: #fff;
+  border: 1px solid #f2f2f2;
   border-radius: 20px;
   padding: 0.5rem 1.2rem;
-  width: 220px;
   font-size: 1rem;
-  margin-right: 1.5rem;
+  max-width: 240px;
+
+  @media (min-width: 768px) {
+    width: 220px;
+  }
 `;
 
 const AddButton = styled.button`
@@ -182,12 +207,11 @@ const AddButton = styled.button`
   color: #232323;
   border: 1px solid #ececec;
   border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
-  margin-left: 1.5rem;
 
   &:hover {
     background: #f7f7f7;
@@ -195,13 +219,25 @@ const AddButton = styled.button`
 `;
 
 const Content = styled.section`
-  padding: 2rem 2rem 0 2rem;
+  padding: 2rem;
 `;
 
 const HotelsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.3rem;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const HotelCard = styled.div`
@@ -211,7 +247,6 @@ const HotelCard = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s;
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -222,6 +257,24 @@ const HotelImage = styled.img`
   width: 100%;
   height: 120px;
   object-fit: cover;
+`;
+
+const IconButton = styled.div`
+  position: relative;
+  font-size: 1.3rem;
+  color: #555;
+  cursor: pointer;
+`;
+
+const Badge = styled.span`
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: orange;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 5px;
+  border-radius: 50%;
 `;
 
 const HotelInfo = styled.div`
@@ -250,7 +303,7 @@ const HotelPrice = styled.div`
 `;
 
 export default function HotelListDashboard() {
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false); // 👈 gestion du modal
 
   return (
     <Layout>
@@ -272,25 +325,38 @@ export default function HotelListDashboard() {
             <FaUserCircle />
           </Avatar>
           <UserInfo>
-            <UserName>Mamadou Doucs</UserName>
+            <UserName>Mamadou</UserName>
             <UserStatus>En ligne</UserStatus>
           </UserInfo>
         </SidebarFooter>
       </Sidebar>
+
       <Main>
         <Header>
           <Title>Liste des hôtels</Title>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <HeaderSection>
             <SearchBar placeholder="Rechercher..." />
-            <AddButton onClick={() => navigate("/hotels/new")}>
-              + Créer un nouvel hôtel
+            <IconButton>
+              <FiBell />
+              <Badge>3</Badge>
+            </IconButton>
+            <IconButton title="Profil">
+              <FaUserCircle />
+            </IconButton>
+          </HeaderSection>
+        </Header>
+
+        <Content>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem" }}>
+            <AddButton onClick={() => setShowModal(true)}>
+              + Créer un hôtel
             </AddButton>
           </div>
-        </Header>
-        <Content>
+
           <h3 style={{ fontWeight: 500, color: "#232323", marginBottom: "1.2rem" }}>
             Hôtels <span style={{ color: "#bdbdbd", fontWeight: 400 }}>({hotels.length})</span>
           </h3>
+
           <HotelsGrid>
             {hotels.map((hotel, idx) => (
               <HotelCard key={`${hotel.name}-${idx}`}>
@@ -305,6 +371,9 @@ export default function HotelListDashboard() {
           </HotelsGrid>
         </Content>
       </Main>
+
+      {/* Affichage du modal */}
+      {showModal && <CreateHotel onClose={() => setShowModal(false)} />}
     </Layout>
   );
 }
